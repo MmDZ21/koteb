@@ -39,7 +39,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           }
 
           // Return the user object if valid
-          return { id: user.id, name: user.name, email: user.email };
+          return {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+          };
         } catch (error) {
           if (error instanceof ZodError) {
             console.error("Validation error:", error.errors);
@@ -53,4 +58,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
+  callbacks: {
+    jwt({ token, user }) {
+      if (user) token.role = user.role;
+      return token;
+    },
+    session({ session, token }) {
+      session.user.role = token.role;
+      return session;
+    },
+  },
 });

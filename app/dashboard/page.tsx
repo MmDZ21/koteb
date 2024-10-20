@@ -1,5 +1,7 @@
+import { auth } from "@/auth";
 import React from "react";
 
-export default function dashboard() {
-  return <div>dashboard</div>;
+export default async function dashboard() {
+  const session = await auth();
+  return <div>{session?.user.role}</div>;
 }

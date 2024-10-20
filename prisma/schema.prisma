@@ -19,14 +19,11 @@ model User {
   email     String   @unique
   password  String
   verified  Boolean  @default(false)
-  role      Role     @default(BUYER)
+  role      Role     @default(USER)
   books     Book[]   @relation("UserBooks")
   orders    Order[]  @relation("UserOrders")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  // Verification information
-  verification Verification?
 }
 
 model Book {
@@ -56,21 +53,9 @@ model Order {
   updatedAt  DateTime    @updatedAt
 }
 
-model Verification {
-  id          String    @id @default(uuid())
-  userId      String    @unique
-  user        User      @relation(fields: [userId], references: [id])
-  passportUrl String? // URL to uploaded passport
-  selfieUrl   String? // URL to uploaded selfie
-  verified    Boolean   @default(false)
-  submittedAt DateTime  @default(now())
-  reviewedAt  DateTime?
-}
-
 enum Role {
   ADMIN
-  BUYER
-  SELLER
+  USER
 }
 
 enum Condition {
