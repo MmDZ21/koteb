@@ -27,3 +27,11 @@ export const updateBookSchema = z.object({
   price: z.number().positive().optional(),
   isbn: z.string().min(10).max(13).optional(),
 });
+
+export const createOrderSchema = z.object({
+  bookId: z.string().uuid(),
+  quantity: z.number().positive(),
+});
+export const updateOrderSchema = z.object({
+  status: z.enum(["PENDING", "COMPLETED", "CANCELED"]),
+});

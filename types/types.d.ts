@@ -1,24 +1,23 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { JWT } from "next-auth/jwt";
+// types/next-auth.d.ts
+import "next-auth";
 
 declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      role: "USER" | "ADMIN";
-    };
-  }
-
   interface User {
     id: string;
     role: "USER" | "ADMIN";
   }
+
+  interface Session {
+    user: {
+      id: string;
+      role: "USER" | "ADMIN";
+    } & DefaultSession["user"];
+  }
 }
+
 declare module "next-auth/jwt" {
-  /** Returned by the `jwt` callback and `auth`, when using JWT sessions */
   interface JWT {
-    /** OpenID ID Token */
-    idToken?: string;
+    id: string;
     role: "USER" | "ADMIN";
   }
 }

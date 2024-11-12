@@ -1,3 +1,4 @@
+import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { updateBookSchema } from "@/lib/zod";
 import { NextResponse } from "next/server";
@@ -7,6 +8,7 @@ export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+  params = await params;
   try {
     const book = await prisma.book.findUnique({
       where: { id: params.id },
@@ -27,6 +29,17 @@ export async function PATCH(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+  const session = await auth();
+  const user = session?.user;
+  params = await params;
+  if (!user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  const book = await prisma.book.findUnique({ where: { id: params.id } });
+  if (!book || book.sellerId !== user.id) {
+    return NextResponse.json({ error: "Not authorized" }, { status: 403 });
+  }
   try {
     const data = await req.json();
     const parsedData = updateBookSchema.parse(data);
@@ -51,6 +64,17 @@ export async function DELETE(
   req: Request,
   { params }: { params: { id: string } }
 ) {
+  const session = await auth();
+  const user = session?.user;
+  params = await params;
+  if (!user) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  const book = await prisma.book.findUnique({ where: { id: params.id } });
+  if (!book || book.sellerId !== user.id) {
+    return NextResponse.json({ error: "Not authorized" }, { status: 403 });
+  }
   try {
     await prisma.book.delete({
       where: { id: params.id },
