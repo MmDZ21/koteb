@@ -5,6 +5,9 @@ import { signInSchema } from "./lib/zod";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/utils/password";
 import { PrismaAdapter } from "@auth/prisma-adapter";
+import { ExtendedUser } from "./types/types";
+
+
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -62,15 +65,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     jwt({ token, user }) {
       if (user) {
         console.log("User in jwt callback:", user); // Add this line
-
-        token.role = user.role;
-        token.id = user.id;
+        token.user = user;
       }
       return token;
     },
     session({ session, token }) {
-      session.user.role = token.role;
-      session.user.id = token.id;
+      session.user = token.user as ExtendedUser;
       return session;
     },
   },

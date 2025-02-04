@@ -1,17 +1,13 @@
 // types/next-auth.d.ts
+import { User } from "@prisma/client";
 import "next-auth";
+import { type DefaultSession } from "next-auth";
+
+export type ExtendedUser = DefaultSession["user"] & User
 
 declare module "next-auth" {
-  interface User {
-    id: string;
-    role: "USER" | "ADMIN";
-  }
-
   interface Session {
-    user: {
-      id: string;
-      role: "USER" | "ADMIN";
-    } & DefaultSession["user"];
+    user: ExtendedUser
   }
 }
 

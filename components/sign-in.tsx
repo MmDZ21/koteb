@@ -5,6 +5,7 @@ export function SignIn() {
     <form
       action={async (formData) => {
         "use server";
+        formData.append('redirectTo', '/dashboard');
         await signIn("credentials", formData);
       }}
     >
